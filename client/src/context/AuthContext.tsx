@@ -1,15 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendEmailVerification } from 'firebase/auth';
 
 interface AuthContextType {
-  user: { uid: string; email: string; displayName: string | null; avatarUrl?: string | null } | null;
+  user: { uid: string; email: string; displayName: string | null; avatarUrl?: string | null; emailVerified: boolean } | null;
   loading: boolean;
   isDevMode: boolean;
   getIdToken: () => Promise<string | null>;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  sendVerification: () => Promise<void>;
+  reloadUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -51,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             email: fbUser.email,
             displayName: fbUser.displayName,
             avatarUrl: fbUser.photoURL,
+            emailVerified: fbUser.emailVerified,
           });
         } else {
           setUser(null);
@@ -67,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           uid: 'dev-mock-uid-123',
           email: 'dev-mock@example.com',
           displayName: 'Eco Developer',
+          emailVerified: true,
         };
         setUser(defaultMock);
         localStorage.setItem('mock_user', JSON.stringify(defaultMock));
@@ -84,6 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email,
         displayName: email.split('@')[0],
         avatarUrl: null,
+        emailVerified: true,
       };
       setUser(mockUser);
       localStorage.setItem('mock_user', JSON.stringify(mockUser));
@@ -92,13 +97,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signup = async (email: string, password: string) => {
     if (isFirebaseConfigured && auth) {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      if (userCredential.user) {
+        await sendEmailVerification(userCredential.user);
+      }
     } else {
       const mockUser = {
         uid: `dev-${email.replace(/[^a-zA-Z0-9]/g, '')}`,
         email,
         displayName: email.split('@')[0],
         avatarUrl: null,
+        emailVerified: true,
       };
       setUser(mockUser);
       localStorage.setItem('mock_user', JSON.stringify(mockUser));
@@ -121,6 +130,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return 'mock-developer-jwt-token';
   };
 
+  const sendVerification = async () => {
+    if (isFirebaseConfigured && auth && auth.currentUser) {
+      await sendEmailVerification(auth.currentUser);
+    }
+  };
+
+  const reloadUser = async () => {
+    if (isFirebaseConfigured && auth && auth.currentUser) {
+      await auth.currentUser.reload();
+      const fbUser = auth.currentUser;
+      setUser({
+        uid: fbUser.uid,
+        email: fbUser.email,
+        displayName: fbUser.displayName,
+        avatarUrl: fbUser.photoURL,
+        emailVerified: fbUser.emailVerified,
+      });
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -131,6 +160,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         signup,
         logout,
+        sendVerification,
+        reloadUser,
       }}
     >
       {!loading && children}

@@ -77,6 +77,9 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(token);
+    if (!decodedToken.email_verified) {
+      return res.status(403).json({ error: 'Forbidden: Email verification required', emailVerified: false });
+    }
     req.user = {
       uid: decodedToken.uid,
       email: decodedToken.email || '',

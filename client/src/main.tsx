@@ -9,6 +9,7 @@ import Calculator from './pages/Calculator.tsx';
 import Gamification from './pages/Gamification.tsx';
 import OffsetMarketplace from './pages/OffsetMarketplace.tsx';
 import Login from './pages/Login.tsx';
+import VerifyEmail from './pages/VerifyEmail.tsx';
 import './index.css';
 
 function App() {
@@ -23,6 +24,10 @@ function App() {
 
   if (!user) {
     return <Login />;
+  }
+
+  if (!user.emailVerified) {
+    return <VerifyEmail />;
   }
 
   return (
