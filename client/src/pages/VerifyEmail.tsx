@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { Mail, RefreshCw, LogOut, AlertCircle, CheckCircle } from 'lucide-react';
+import { formatAuthError } from '../utils/authErrors.ts';
 
 export default function VerifyEmail() {
   const { user, logout, sendVerification, reloadUser } = useAuth();
@@ -31,7 +32,7 @@ export default function VerifyEmail() {
         setError('Email not verified yet. Please click the link in your verification email and try again.');
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to reload user status.');
+      setError(formatAuthError(err));
     } finally {
       setChecking(false);
     }
@@ -47,7 +48,7 @@ export default function VerifyEmail() {
       setMessage('Verification email sent! Please check your inbox (and spam folder).');
       setCooldown(60);
     } catch (err: any) {
-      setError(err.message || 'Failed to send verification email. Try again later.');
+      setError(formatAuthError(err));
     } finally {
       setResending(false);
     }

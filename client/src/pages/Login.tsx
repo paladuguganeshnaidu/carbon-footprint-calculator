@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { Leaf, Mail, Lock, User as UserIcon, AlertCircle } from 'lucide-react';
+import { formatAuthError } from '../utils/authErrors.ts';
 
 export default function Login() {
   const { login, signup, isDevMode } = useAuth();
@@ -33,7 +34,7 @@ export default function Login() {
       }
     } catch (err: any) {
       console.error(err);
-      setError(err.message || 'Authentication failed. Please verify your credentials.');
+      setError(formatAuthError(err));
     } finally {
       setLoading(false);
     }
