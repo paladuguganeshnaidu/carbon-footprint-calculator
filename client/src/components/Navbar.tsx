@@ -26,27 +26,16 @@ export default function Navbar({ userPoints = 0, userStreak = 0 }: NavbarProps) 
 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/calculator', label: 'Eco Calculator', icon: Calculator },
+    { path: '/calculator', label: 'Calculator', icon: Calculator },
     { path: '/gamification', label: 'Eco Coach', icon: Trophy },
     { path: '/offset', label: 'Offsets', icon: ShoppingBag },
   ];
 
   return (
-    <nav className="navbar" style={{
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      height: '100vh',
-      padding: '24px 16px',
-      background: 'var(--bg-card)',
-      backdropFilter: 'var(--glass-blur)',
-      borderRight: '1px solid var(--border-color)',
-      position: 'sticky',
-      top: 0
-    }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+    <nav className="navbar">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }} className="nav-top-section">
         {/* Header Branding */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingLeft: '8px' }}>
+        <div className="nav-logo">
           <div style={{
             background: 'var(--primary-glow)',
             color: 'var(--primary)',
@@ -56,15 +45,15 @@ export default function Navbar({ userPoints = 0, userStreak = 0 }: NavbarProps) 
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <Leaf size={24} />
+            <Leaf size={22} />
           </div>
-          <span style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.5px' }}>
+          <span style={{ fontSize: '1.3rem', fontWeight: 800, letterSpacing: '-0.5px' }}>
             Eco<span style={{ color: 'var(--primary)' }}>Coach</span>
           </span>
         </div>
 
         {/* Navigation list */}
-        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <ul className="nav-links">
           {navItems.map(item => {
             const isActive = location.pathname === item.path;
             const Icon = item.icon;
@@ -76,11 +65,12 @@ export default function Navbar({ userPoints = 0, userStreak = 0 }: NavbarProps) 
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    padding: '12px 16px',
-                    borderRadius: '12px',
+                    gap: '10px',
+                    padding: '10px 14px',
+                    borderRadius: '10px',
                     textDecoration: 'none',
                     fontWeight: 600,
+                    fontSize: '0.9rem',
                     color: isActive ? '#fff' : 'var(--text-main)',
                     backgroundColor: isActive ? 'var(--primary)' : 'transparent',
                     boxShadow: isActive ? '0 4px 12px var(--primary-glow)' : 'none',
@@ -97,8 +87,8 @@ export default function Navbar({ userPoints = 0, userStreak = 0 }: NavbarProps) 
                     }
                   }}
                 >
-                  <Icon size={20} />
-                  <span>{item.label}</span>
+                  <Icon size={18} />
+                  <span className="nav-link-label">{item.label}</span>
                 </Link>
               </li>
             );
@@ -106,48 +96,49 @@ export default function Navbar({ userPoints = 0, userStreak = 0 }: NavbarProps) 
         </ul>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div className="nav-controls">
         {/* Stats Widget */}
         {user && (
-          <div style={{
-            padding: '14px',
-            borderRadius: '14px',
+          <div className="navbar-stats" style={{
+            padding: '12px',
+            borderRadius: '12px',
             background: 'var(--border-color)',
             display: 'flex',
             justifyContent: 'space-around',
             alignItems: 'center',
-            fontSize: '0.9rem',
-            fontWeight: 600
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            marginBottom: '4px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent)' }}>
-              <Trophy size={16} />
+              <Trophy size={14} />
               <span>{userPoints} pts</span>
             </div>
-            <div style={{ width: '1px', height: '20px', background: 'var(--border-color)' }}></div>
+            <div style={{ width: '1px', height: '16px', background: 'var(--border-color)' }}></div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--danger)' }}>
-              <Flame size={16} />
+              <Flame size={14} />
               <span>{userStreak} days</span>
             </div>
           </div>
         )}
 
         {/* Theme and Logout control */}
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px' }} className="nav-buttons">
           <button 
             onClick={toggleTheme}
             className="btn btn-secondary"
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-            style={{ flex: 1, padding: '10px' }}
+            style={{ flex: 1, padding: '8px', minWidth: '40px' }}
           >
-            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </button>
           <button 
             onClick={logout}
             className="btn btn-secondary"
             aria-label="Logout"
-            style={{ flex: 1, padding: '10px', color: 'var(--danger)' }}
+            style={{ flex: 1, padding: '8px', minWidth: '40px', color: 'var(--danger)' }}
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
           </button>
         </div>
 
@@ -156,13 +147,13 @@ export default function Navbar({ userPoints = 0, userStreak = 0 }: NavbarProps) 
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
+            gap: '10px',
             borderTop: '1px solid var(--border-color)',
-            paddingTop: '16px'
-          }}>
+            paddingTop: '12px'
+          }} className="nav-user-card">
             <div style={{
-              width: '38px',
-              height: '38px',
+              width: '32px',
+              height: '32px',
               borderRadius: '50%',
               backgroundColor: 'var(--primary)',
               color: '#fff',
@@ -170,17 +161,17 @@ export default function Navbar({ userPoints = 0, userStreak = 0 }: NavbarProps) 
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 700,
-              fontSize: '1rem',
+              fontSize: '0.85rem',
               backgroundImage: user.avatarUrl ? `url(${user.avatarUrl})` : 'none',
               backgroundSize: 'cover'
             }}>
               {!user.avatarUrl && (user.displayName?.[0] || user.email?.[0] || 'U').toUpperCase()}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-              <span style={{ fontSize: '0.9rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }} className="nav-user-info">
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {user.displayName || 'Eco Warrior'}
               </span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {user.email}
               </span>
             </div>
