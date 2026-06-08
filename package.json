@@ -1,0 +1,22 @@
+{
+  "name": "carbon-footprint-calculator-root",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev:server": "npm --workspace=server run dev",
+    "dev:client": "npm --workspace=client run dev",
+    "build:shared": "npm --workspace=shared run build",
+    "build:server": "npm --workspace=server run build",
+    "build:client": "npm --workspace=client run build",
+    "build": "npm run build:shared && npm run build:server && npm run build:client",
+    "db:push": "npm --workspace=server run db:push",
+    "test:server": "npm --workspace=server run test",
+    "test:client": "npm --workspace=client run test",
+    "test": "npm run test:server && npm run test:client"
+  }
+}

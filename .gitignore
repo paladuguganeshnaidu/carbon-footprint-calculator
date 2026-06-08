@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+.env*.local
+app.db
+app.db-journal
+app.db-wal
+app_test.db
+app_test.db-journal
+app_test.db-wal
+.DS_Store
+*.log
+.system_generated/
