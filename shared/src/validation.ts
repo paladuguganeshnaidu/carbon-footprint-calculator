@@ -25,3 +25,9 @@ export const profileUpdateSchema = z.object({
   displayName: z.string().min(1, 'Display name cannot be empty').max(50, 'Display name too long').nullable().optional(),
   avatarUrl: z.string().url('Invalid avatar URL').nullable().optional(),
 });
+
+export const userGoalSchema = z.object({
+  category: z.string().min(1, 'Category is required'),
+  targetValue: z.number().positive('Goal target value must be positive'),
+  targetMonth: z.string().regex(/^\d{4}-\d{2}$/, 'Target month must be in YYYY-MM format'),
+});

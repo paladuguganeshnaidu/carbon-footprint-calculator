@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { profileUpdateSchema } from '@carbon/shared';
 import { db } from '../config/db.js';
-import { users, footprintEntries, userChallenges, userAchievements, offsetPurchases } from '../db/schema.js';
+import { users, footprintEntries, userChallenges, userAchievements, offsetPurchases, userGoals } from '../db/schema.js';
 import { eq, and, desc, sql } from 'drizzle-orm';
 
 const router = Router();
@@ -201,6 +201,14 @@ router.get('/dashboard', async (req, res) => {
       });
     }
 
+    // 6. Fetch monthly goals for the current month
+    const goalsList = await db.query.userGoals.findMany({
+      where: and(
+        eq(userGoals.userId, userId),
+        eq(userGoals.targetMonth, currentMonthStr)
+      )
+    });
+
     res.json({
       user,
       kpis: {
@@ -210,7 +218,8 @@ router.get('/dashboard', async (req, res) => {
         challengesCompleted: completedChallengesList.length
       },
       breakdown,
-      monthlyHistory
+      monthlyHistory,
+      goals: goalsList
     });
 
   } catch (error) {

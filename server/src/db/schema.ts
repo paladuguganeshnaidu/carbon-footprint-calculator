@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, real, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
@@ -22,7 +22,10 @@ export const footprintEntries = sqliteTable('footprint_entries', {
   carbonCo2eKg: real('carbon_co2e_kg').notNull(),
   metadata: text('metadata').notNull(), // JSON string for details
   createdAt: integer('created_at').notNull().default(sql`(strftime('%s', 'now'))`),
-});
+}, (table) => ({
+  userIdIdx: index('footprint_user_id_idx').on(table.userId),
+  entryDateIdx: index('footprint_entry_date_idx').on(table.entryDate),
+}));
 
 export const userChallenges = sqliteTable('user_challenges', {
   id: text('id').primaryKey(),
@@ -32,14 +35,18 @@ export const userChallenges = sqliteTable('user_challenges', {
   progress: real('progress').notNull().default(0.0),
   startedAt: integer('started_at').notNull().default(sql`(strftime('%s', 'now'))`),
   completedAt: integer('completed_at'), // timestamp
-});
+}, (table) => ({
+  userIdIdx: index('challenges_user_id_idx').on(table.userId),
+}));
 
 export const userAchievements = sqliteTable('user_achievements', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   badgeId: text('badge_id').notNull(), // 'first_calculation', etc.
   awardedAt: integer('awarded_at').notNull().default(sql`(strftime('%s', 'now'))`),
-});
+}, (table) => ({
+  userIdIdx: index('achievements_user_id_idx').on(table.userId),
+}));
 
 export const offsetPurchases = sqliteTable('offset_purchases', {
   id: text('id').primaryKey(),
@@ -48,9 +55,24 @@ export const offsetPurchases = sqliteTable('offset_purchases', {
   offsetAmountCo2eKg: real('offset_amount_co2e_kg').notNull(),
   costSimulatedCurrency: real('cost_simulated_currency').notNull(),
   purchasedAt: integer('purchased_at').notNull().default(sql`(strftime('%s', 'now'))`),
-});
+}, (table) => ({
+  userIdIdx: index('offsets_user_id_idx').on(table.userId),
+}));
+
+export const userGoals = sqliteTable('user_goals', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  category: text('category').notNull(), // 'energy', 'transport', 'food', 'waste', 'total'
+  targetValue: real('target_value').notNull(), // target in kg CO2e
+  targetMonth: text('target_month').notNull(), // YYYY-MM
+  createdAt: integer('created_at').notNull().default(sql`(strftime('%s', 'now'))`),
+}, (table) => ({
+  userIdIdx: index('goals_user_id_idx').on(table.userId),
+}));
+
 export type DBUser = typeof users.$inferSelect;
 export type DBFootprintEntry = typeof footprintEntries.$inferSelect;
 export type DBUserChallenge = typeof userChallenges.$inferSelect;
 export type DBUserAchievement = typeof userAchievements.$inferSelect;
 export type DBOffsetPurchase = typeof offsetPurchases.$inferSelect;
+export type DBUserGoal = typeof userGoals.$inferSelect;

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import admin from 'firebase-admin';
+import { logger } from '../config/logger.js';
 
 // Extend Express Request type to attach verified user info
 declare global {
@@ -30,12 +31,12 @@ export function initFirebase() {
         }),
       });
       firebaseAdminInitialized = true;
-      console.log('Firebase Admin SDK initialized successfully.');
+      logger.info('Firebase Admin SDK initialized successfully.');
     } catch (error) {
-      console.error('Failed to initialize Firebase Admin SDK:', error);
+      logger.error('Failed to initialize Firebase Admin SDK', error);
     }
   } else {
-    console.warn(
+    logger.warn(
       'Firebase environment variables missing. Running in development authentication fallback mode.'
     );
   }
@@ -86,7 +87,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     };
     next();
   } catch (error) {
-    console.error('Error verifying Firebase ID token:', error);
+    logger.error('Error verifying Firebase ID token', error);
     res.status(401).json({ error: 'Unauthorized: Invalid token' });
   }
 }

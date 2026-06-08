@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.tsx';
 import { fetchDashboard, fetchFootprints, deleteFootprint } from '../services/api.ts';
+import GoalsWidget from '../components/GoalsWidget.tsx';
 import { DashboardSummaryResponse, FootprintEntry } from '@carbon/shared';
 import { 
   ResponsiveContainer, 
@@ -209,6 +210,39 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
         {/* Historical Trends Area Chart */}
         <div className="card-glass" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Emissions & Offsets History</h2>
+          <div style={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            border: 0
+          }}>
+            <table>
+              <caption>Historical monthly emissions and offsets data table</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Month</th>
+                  <th scope="col">Emissions (kg CO2e)</th>
+                  <th scope="col">Offsets Bought (kg CO2e)</th>
+                  <th scope="col">Paris Target Limit (kg CO2e)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {monthlyHistory.map(h => (
+                  <tr key={h.month}>
+                    <td>{h.month}</td>
+                    <td>{h.carbonKg} kg</td>
+                    <td>{h.offsetKg} kg</td>
+                    <td>{h.targetKg} kg</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <div style={{ width: '100%', height: '320px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={monthlyHistory}>
@@ -235,6 +269,37 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
         {/* Category breakdown (Pie Chart) */}
         <div className="card-glass" style={{ display: 'flex', flexDirection: 'column', gap: '20px', height: '100%' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Emission Breakdown</h2>
+          <div style={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            border: 0
+          }}>
+            <table>
+              <caption>Carbon footprint breakdown by category data table</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Category</th>
+                  <th scope="col">Emissions (kg CO2e)</th>
+                  <th scope="col">Percentage</th>
+                </tr>
+              </thead>
+              <tbody>
+                {breakdown.map(b => (
+                  <tr key={b.category}>
+                    <td>{b.category}</td>
+                    <td>{b.value} kg</td>
+                    <td>{b.percentage}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <div style={{ width: '100%', height: '200px', display: 'flex', justifyContent: 'center' }}>
             {breakdown.some(b => b.value > 0) ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -290,10 +355,10 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
         </div>
       </div>
 
-      {/* Coach & Recent History Grid */}
+      {/* Coach, Goals & Recent History Grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '1.2fr 1.8fr',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
         gap: '24px',
         alignItems: 'start'
       }}>
@@ -326,6 +391,14 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
             <span>Switch to the Eco Calculator tab to log new records.</span>
           </div>
         </div>
+
+        {/* Goals Budget Progress Widget */}
+        <GoalsWidget
+          goals={data.goals || []}
+          currentBreakdown={breakdown}
+          totalThisMonth={kpis.totalCarbonThisMonthKg}
+          onGoalUpdated={loadData}
+        />
 
         {/* Recent logs table */}
         <div className="card-glass" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

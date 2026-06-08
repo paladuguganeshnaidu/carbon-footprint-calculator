@@ -1,15 +1,19 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { initFirebase } from './middleware/auth.js';
+import { logger } from './config/logger.js';
 import footprintRouter from './routes/footprint.js';
 import userRouter from './routes/user.js';
 import offsetRouter from './routes/offset.js';
+import healthRouter from './routes/health.js';
+import goalsRouter from './routes/goals.js';
 
 import { calculationRequestSchema } from '@carbon/shared';
 import { calculateCarbon } from './utils/calculator.js';
@@ -26,14 +30,52 @@ const __dirname = path.dirname(__filename);
 // Initialize Firebase Admin SDK
 initFirebase();
 
-// Security Headers Setup
+// Gzip asset compression
+app.use(compression());
+
+// Structured JSON request logger middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    logger.info(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`, {
+      method: req.method,
+      url: req.originalUrl,
+      status: res.statusCode,
+      duration,
+      ip: req.ip
+    });
+  });
+  next();
+});
+
+// Security Headers Setup with custom Content Security Policy (CSP)
 app.use(helmet({
-  contentSecurityPolicy: false
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://apis.google.com", "https://www.gstatic.com", "https://*.firebaseapp.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://www.gstatic.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https://images.unsplash.com", "https://*.googleusercontent.com"],
+      connectSrc: ["'self'", "https://*.googleapis.com", "https://securetoken.googleapis.com", "https://*.firebaseapp.com"],
+      frameSrc: ["'self'", "https://*.firebaseapp.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    }
+  }
 }));
 
 // CORS Configuration
+const allowedOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (origin === allowedOrigin || allowedOrigin === '*') {
+      return callback(null, true);
+    }
+    return callback(new Error('CORS Policy: Origin not allowed.'));
+  },
   credentials: true
 }));
 
@@ -51,9 +93,11 @@ const apiLimiter = rateLimit({
 app.use('/api/', apiLimiter);
 
 // API Routes
+app.use('/api/health', healthRouter);
 app.use('/api/footprint', footprintRouter);
 app.use('/api/user', userRouter);
 app.use('/api/offsets', offsetRouter);
+app.use('/api/user/goals', goalsRouter);
 
 // Raw carbon footprint calculation preview route (No Auth needed)
 app.post('/api/calculate', (req, res) => {
@@ -92,14 +136,14 @@ if (process.env.NODE_ENV === 'production') {
 
 // Global Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Unhandled Server Error:', err);
+  logger.error('Unhandled Server Error', err);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
 // Only start the listener if app.ts is run directly (useful for Supertest mocks)
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
-    console.log(`Carbon Footprint Tracker server running on port ${PORT}`);
+    logger.info(`Carbon Footprint Tracker server running on port ${PORT}`);
   });
 }
 

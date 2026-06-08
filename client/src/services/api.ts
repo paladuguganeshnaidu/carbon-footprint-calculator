@@ -111,3 +111,17 @@ export async function updateProfile(getIdToken: () => Promise<string | null>, us
   if (!res.ok) throw new Error('Failed to update profile');
   return res.json();
 }
+
+export async function saveGoal(getIdToken: () => Promise<string | null>, user: any, data: any) {
+  const headers = await getHeaders(getIdToken, user);
+  const res = await fetch(`${API_BASE}/user/goals`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) {
+    const errData = await res.json();
+    throw new Error(errData.error || 'Failed to save monthly goal');
+  }
+  return res.json();
+}

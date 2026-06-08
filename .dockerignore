@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+dist
+.git
+.github
+.env
+*.db
+*.db-journal
+*.db-wal
+logs/
+client/dist
+server/dist
+shared/dist

@@ -77,4 +77,14 @@ export interface DashboardSummaryResponse {
     offsetKg: number;
     targetKg: number;
   }[];
+  goals?: UserGoal[];
+}
+
+export interface UserGoal {
+  id: string;
+  userId: string;
+  category: string;
+  targetValue: number;
+  targetMonth: string;
+  createdAt: number;
 }
