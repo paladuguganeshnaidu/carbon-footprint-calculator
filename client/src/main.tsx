@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext.tsx';
+import { AuthProvider, useAuth } from './context/AuthContext.tsx';
 import { ThemeProvider } from './context/ThemeContext.tsx';
 import Navbar from './components/Navbar.tsx';
 import Dashboard from './pages/Dashboard.tsx';
 import Calculator from './pages/Calculator.tsx';
 import Gamification from './pages/Gamification.tsx';
 import OffsetMarketplace from './pages/OffsetMarketplace.tsx';
+import Login from './pages/Login.tsx';
 import './index.css';
 
 function App() {
+  const { user } = useAuth();
   const [points, setPoints] = useState(0);
   const [streak, setStreak] = useState(0);
 
@@ -18,6 +20,10 @@ function App() {
     setPoints(pts);
     setStreak(strk);
   };
+
+  if (!user) {
+    return <Login />;
+  }
 
   return (
     <div className="app-container">
