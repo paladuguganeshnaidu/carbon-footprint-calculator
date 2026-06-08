@@ -28,23 +28,7 @@ initFirebase();
 
 // Security Headers Setup
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://apis.google.com"],
-      connectSrc: [
-        "'self'", 
-        "https://identitytoolkit.googleapis.com", 
-        "https://securetoken.googleapis.com",
-        "http://localhost:3000"
-      ],
-      imgSrc: ["'self'", "data:", "https://*"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      objectSrc: ["'none'"],
-      upgradeInsecureRequests: [],
-    },
-  }
+  contentSecurityPolicy: false
 }));
 
 // CORS Configuration
