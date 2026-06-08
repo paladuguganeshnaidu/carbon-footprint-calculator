@@ -67,11 +67,22 @@ app.use(helmet({
 }));
 
 // CORS Configuration
-const allowedOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const allowedOrigins = [
+  process.env.CLIENT_ORIGIN,
+  'https://carbonfootprintcalculator.me',
+  'http://localhost:5173',
+  'http://localhost:3000'
+].filter(Boolean) as string[];
+
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (origin === allowedOrigin || allowedOrigin === '*') {
+    // Allow whitelisted origins, wildcard, or matches to our custom domain
+    if (
+      allowedOrigins.includes(origin) ||
+      allowedOrigins.includes('*') ||
+      origin.endsWith('carbonfootprintcalculator.me')
+    ) {
       return callback(null, true);
     }
     return callback(new Error('CORS Policy: Origin not allowed.'));
