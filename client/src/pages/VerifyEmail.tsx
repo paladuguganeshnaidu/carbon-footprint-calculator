@@ -140,7 +140,7 @@ export default function VerifyEmail() {
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
               <a 
-                href="https://mail.google.com/mail/u/0/#search/carbon+footprint" 
+                href="https://mail.google.com/mail/u/0/#search/ZeroGrid" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="btn-secondary"

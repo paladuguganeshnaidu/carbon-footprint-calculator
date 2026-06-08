@@ -13,7 +13,7 @@ import {
   Car,
   Utensils,
   Trash,
-  Leaf
+  Activity
 } from 'lucide-react';
 
 interface GamificationProps {
@@ -42,7 +42,7 @@ const BADGES_CONFIG = [
   {
     id: 'challenge_conqueror',
     title: 'Challenge Master',
-    description: 'Completed your first eco coach challenge.',
+    description: 'Completed your first ZeroGrid challenge.',
     iconColor: '#10b981',
   },
   {
@@ -95,7 +95,7 @@ export default function Gamification({ onStatsUpdate }: GamificationProps) {
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-        <div style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-muted)' }}>Synching eco milestones...</div>
+        <div style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-muted)' }}>Syncing milestones...</div>
       </div>
     );
   }
@@ -105,8 +105,8 @@ export default function Gamification({ onStatsUpdate }: GamificationProps) {
       
       {/* Header Banner */}
       <div>
-        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.8px' }}>Eco Coach</h1>
-        <p style={{ color: 'var(--text-muted)' }}>Complete challenges, build healthy streaks, and earn badges to level up.</p>
+        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.8px' }}>Grid Challenges</h1>
+        <p style={{ color: 'var(--text-muted)' }}>Complete grid targets, maintain calculations consistency, and unlock badges.</p>
       </div>
 
       {/* Stats Quickbar */}
@@ -125,7 +125,7 @@ export default function Gamification({ onStatsUpdate }: GamificationProps) {
             <Trophy size={32} />
           </div>
           <div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Eco Points</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total ZeroGrid Points</div>
             <div style={{ fontSize: '2rem', fontWeight: 800 }}>{points} pts</div>
           </div>
         </div>
@@ -148,14 +148,14 @@ export default function Gamification({ onStatsUpdate }: GamificationProps) {
 
       {/* Main challenges block */}
       <div className="card-glass" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        <h2 style={{ fontSize: '1.3rem', fontWeight: 700 }}>Active Eco Challenges</h2>
+        <h2 style={{ fontSize: '1.3rem', fontWeight: 700 }}>Active Grid Challenges</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
           {ECO_CHALLENGES.map(challenge => {
             const userChallenge = challenges.find(c => c.challengeId === challenge.id);
             const isCompleted = userChallenge?.status === 'completed';
             const progress = userChallenge?.progress || 0;
             const percentage = Math.min((progress / challenge.target) * 100, 100);
-            const Icon = CATEGORY_ICONS[challenge.category] || Leaf;
+            const Icon = CATEGORY_ICONS[challenge.category] || Activity;
 
             return (
               <div 

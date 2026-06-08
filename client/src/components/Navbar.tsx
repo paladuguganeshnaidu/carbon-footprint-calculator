@@ -9,7 +9,7 @@ import {
   Sun, 
   Moon, 
   LogOut, 
-  Leaf,
+  Grid,
   Flame
 } from 'lucide-react';
 
@@ -26,7 +26,7 @@ export default function Navbar({ userPoints = 0, userStreak = 0 }: NavbarProps) 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/calculator', label: 'Calculator', icon: Calculator },
-    { path: '/gamification', label: 'Eco Coach', icon: Trophy },
+    { path: '/gamification', label: 'Grid Challenges', icon: Trophy },
     { path: '/offset', label: 'Offsets', icon: ShoppingBag },
   ];
 
@@ -39,15 +39,15 @@ export default function Navbar({ userPoints = 0, userStreak = 0 }: NavbarProps) 
             background: 'var(--primary-glow)',
             color: 'var(--primary)',
             padding: '8px',
-            borderRadius: '12px',
+            borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <Leaf size={22} />
+            <Grid size={22} />
           </div>
           <span style={{ fontSize: '1.3rem', fontWeight: 800, letterSpacing: '-0.5px' }}>
-            Eco<span style={{ color: 'var(--primary)' }}>Coach</span>
+            Zero<span style={{ color: 'var(--primary)' }}>Grid</span>
           </span>
         </div>
 
@@ -168,7 +168,7 @@ export default function Navbar({ userPoints = 0, userStreak = 0 }: NavbarProps) 
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }} className="nav-user-info">
               <span style={{ fontSize: '0.85rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {user.displayName || 'Eco Warrior'}
+                {user.displayName || 'Grid Member'}
               </span>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {user.email}

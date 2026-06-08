@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: zerogrid
+    env: node
+    plan: standard # Required for persistent disk, use 'free' if data persistence is not needed
+    buildCommand: npm install && npm run build
+    startCommand: npm --workspace=server start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        value: file:/data/app.db
+      - key: CLIENT_ORIGIN
+        value: https://zerogrid.onrender.com # Replace with your actual Render URL
+      
+      # Firebase Client Keys
+      - key: VITE_FIREBASE_API_KEY
+        sync: false
+      - key: VITE_FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: VITE_FIREBASE_PROJECT_ID
+        sync: false
+      - key: VITE_FIREBASE_APP_ID
+        sync: false
+        
+      # Firebase Admin SDK SDK Config (JSON Key equivalents)
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+        
+    disk:
+      name: sqlite-db-volume
+      mountPath: /data
+      sizeGB: 1

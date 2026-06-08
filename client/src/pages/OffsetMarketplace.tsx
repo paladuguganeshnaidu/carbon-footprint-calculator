@@ -84,7 +84,7 @@ export default function OffsetMarketplace({ onStatsUpdate }: OffsetMarketplacePr
 
     const pointsCost = Math.round(Number(offsetValue) * project.factor);
     if (points < pointsCost) {
-      setError(`Insufficient Eco-Points. Cost: ${pointsCost} pts, Balance: ${points} pts`);
+      setError(`Insufficient ZeroGrid Points. Cost: ${pointsCost} pts, Balance: ${points} pts`);
       return;
     }
 
@@ -143,8 +143,8 @@ export default function OffsetMarketplace({ onStatsUpdate }: OffsetMarketplacePr
       {/* Header banner */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.8px' }}>Carbon Marketplace</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Neutralize your carbon footprint by investing earned Eco-Points into green projects.</p>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.8px' }}>Carbon Offsets</h1>
+          <p style={{ color: 'var(--text-muted)' }}>Neutralize your carbon footprint by investing earned ZeroGrid Points into green projects.</p>
         </div>
         
         {/* Points indicator */}
@@ -339,7 +339,7 @@ export default function OffsetMarketplace({ onStatsUpdate }: OffsetMarketplacePr
             }}>
               <ShoppingBag size={36} color="var(--primary)" />
               <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>Select a Project</div>
-              <p style={{ fontSize: '0.8rem' }}>Click on any of the listed offset projects to allocate your Eco-Points.</p>
+              <p style={{ fontSize: '0.8rem' }}>Click on any of the listed offset projects to allocate your ZeroGrid Points.</p>
             </div>
           )}
         </div>
@@ -383,7 +383,7 @@ export default function OffsetMarketplace({ onStatsUpdate }: OffsetMarketplacePr
             </h3>
 
             <p style={{ fontSize: '0.95rem', maxWidth: '520px', margin: '0 auto', lineHeight: '1.6', color: 'var(--text-muted)' }}>
-              has successfully neutralized a total of <strong style={{ color: 'var(--primary)' }}>{certificateData.offsetAmount} kg</strong> of carbon dioxide equivalent (CO2e) emissions by investing <strong>{certificateData.pointsCost} Eco-Points</strong> into the simulated project:
+              has successfully neutralized a total of <strong style={{ color: 'var(--primary)' }}>{certificateData.offsetAmount} kg</strong> of carbon dioxide equivalent (CO2e) emissions by investing <strong>{certificateData.pointsCost} ZeroGrid Points</strong> into the simulated project:
             </p>
 
             <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>

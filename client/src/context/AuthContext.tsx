@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendEmailVerification } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendEmailVerification, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 interface AuthContextType {
   user: { uid: string; email: string; displayName: string | null; avatarUrl?: string | null; emailVerified: boolean } | null;
@@ -12,6 +12,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   sendVerification: () => Promise<void>;
   reloadUser: () => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -123,6 +124,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const loginWithGoogle = async () => {
+    if (isFirebaseConfigured && auth) {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } else {
+      const mockUser = {
+        uid: 'dev-google-mock-uid-999',
+        email: 'google-dev@example.com',
+        displayName: 'Google Mock Dev',
+        avatarUrl: 'https://lh3.googleusercontent.com/a/default-user',
+        emailVerified: true,
+      };
+      setUser(mockUser);
+      localStorage.setItem('mock_user', JSON.stringify(mockUser));
+    }
+  };
+
   const getIdToken = async (forceRefresh = false): Promise<string | null> => {
     if (isFirebaseConfigured && auth && auth.currentUser) {
       return auth.currentUser.getIdToken(forceRefresh);
@@ -168,6 +186,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         sendVerification,
         reloadUser,
+        loginWithGoogle,
       }}
     >
       {!loading && children}

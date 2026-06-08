@@ -152,8 +152,8 @@ export default function Calculator({ onStatsUpdate }: CalculatorProps) {
     <div className="animate-fade-in" style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
       
       <div>
-        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.8px' }}>Eco Calculator</h1>
-        <p style={{ color: 'var(--text-muted)' }}>Input your daily metrics to log your carbon output and earn Eco-Points.</p>
+        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.8px' }}>Carbon Calculator</h1>
+        <p style={{ color: 'var(--text-muted)' }}>Input your daily metrics to log your carbon output and earn ZeroGrid Points.</p>
       </div>
 
       {/* Categories Tabs Navigation */}
@@ -280,7 +280,7 @@ export default function Calculator({ onStatsUpdate }: CalculatorProps) {
             className="btn btn-primary"
             style={{ width: '100%', height: '48px' }}
           >
-            {loading ? 'Submitting Log...' : 'Save Footprint Log'}
+            {loading ? 'Submitting Log...' : 'Save Log Entry'}
           </button>
         </form>
 
@@ -289,8 +289,9 @@ export default function Calculator({ onStatsUpdate }: CalculatorProps) {
           
           {/* Carbon live index preview */}
           <div className="card-glass" style={{
-            background: 'var(--primary-glow)',
+            background: 'linear-gradient(135deg, var(--primary-glow) 0%, rgba(18, 18, 22, 0.2) 100%)',
             borderColor: 'var(--primary)',
+            borderRadius: '8px',
             textAlign: 'center',
             display: 'flex',
             flexDirection: 'column',

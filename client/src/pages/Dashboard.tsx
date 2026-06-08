@@ -18,17 +18,17 @@ import {
   Line, 
   ComposedChart
 } from 'recharts';
-import { Trash2, Leaf, Info, Zap, Car, Utensils, Trash } from 'lucide-react';
+import { Trash2, Activity, Info, Zap, Car, Utensils, Trash } from 'lucide-react';
 
 interface DashboardProps {
   onStatsUpdate: (points: number, streak: number) => void;
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  energy: '#3b82f6',     // Blue
-  transport: '#f59e0b',  // Amber/Orange
-  food: '#10b981',       // Emerald/Green
-  waste: '#8b5cf6'       // Purple
+  energy: '#00d2ff',     // Cyan
+  transport: '#ffb300',  // Amber
+  food: 'hsl(158, 92%, 43%)', // Emerald
+  waste: '#a855f7'       // Purple
 };
 
 const CATEGORY_ICONS: Record<string, any> = {
@@ -122,7 +122,7 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
     if (!highest || highest.value === 0) {
       return {
         title: "Start Logging!",
-        advice: "You haven't logged any carbon entries yet. Head over to the Eco Calculator to map out your footprint!",
+        advice: "You haven't logged any carbon entries yet. Head over to the Calculator to map out your footprint!",
         color: 'var(--primary)'
       };
     }
@@ -169,10 +169,10 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
       {/* Header section */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.8px' }}>Eco Dashboard</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Welcome back, {user?.displayName || 'Eco Warrior'}. Here is your current carbon profile.</p>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.8px' }}>ZeroGrid Dashboard</h1>
+          <p style={{ color: 'var(--text-muted)' }}>Welcome back, {user?.displayName || 'Grid Member'}. Here is your current carbon profile.</p>
         </div>
-        <button onClick={loadData} className="btn btn-secondary">Sync Logs</button>
+        <button onClick={loadData} className="btn btn-secondary">Sync Dashboard</button>
       </div>
 
       {/* KPI Cards Grid */}
@@ -190,7 +190,7 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
         </div>
 
         <div className="card-glass" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Eco Points Balance</span>
+          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>ZeroGrid Points</span>
           <span style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent)' }}>
             {kpis.pointsEarned} <span style={{ fontSize: '1rem', fontWeight: 600 }}>pts</span>
           </span>
@@ -344,7 +344,7 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
           {/* Detailed breakdown list */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {breakdown.map(b => {
-              const Icon = CATEGORY_ICONS[b.category] || Leaf;
+              const Icon = CATEGORY_ICONS[b.category] || Activity;
               return (
                 <div key={b.category} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -378,14 +378,14 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
       }}>
         {/* Eco Coach Smart Advice */}
         <div className="card-glass" style={{
-          borderLeft: `6px solid ${advice.color}`,
+          borderLeft: `4px solid ${advice.color}`,
           display: 'flex',
           flexDirection: 'column',
           gap: '14px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Leaf size={20} color="var(--primary)" />
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Eco Coach Advice</h2>
+            <Activity size={20} color="var(--primary)" />
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Grid Intelligence</h2>
           </div>
           <h3 style={{ fontSize: '1rem', fontWeight: 700, color: advice.color }}>{advice.title}</h3>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>{advice.advice}</p>
@@ -397,12 +397,12 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
             color: 'var(--primary)',
             background: 'var(--primary-glow)',
             padding: '8px 12px',
-            borderRadius: '8px',
+            borderRadius: '6px',
             fontWeight: 600,
             marginTop: '10px'
           }}>
             <Info size={14} />
-            <span>Switch to the Eco Calculator tab to log new records.</span>
+            <span>Switch to the Calculator tab to log new records.</span>
           </div>
         </div>
 
@@ -439,7 +439,7 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
                 </thead>
                 <tbody>
                   {recentEntries.map(entry => {
-                    const Icon = CATEGORY_ICONS[entry.category] || Leaf;
+                    const Icon = CATEGORY_ICONS[entry.category] || Activity;
                     const meta = entry.metadata as any;
                     return (
                       <tr key={entry.id} style={{ borderBottom: '1px solid var(--border-color)' }}>

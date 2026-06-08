@@ -1,14 +1,13 @@
-# EcoCoach
+# ZeroGrid - Carbon Intelligence Engine
 
 ### Empowering individuals to calculate, reduce, and offset emissions with precision.
 
-EcoCoach is a premium, enterprise-grade carbon tracking, analytics, and gamification platform. The application provides modular carbon calculators, high-fidelity data visualizations, personalized reduction targets, interactive eco-challenges, and a simulated carbon offset marketplace. Optimized for performance and hardened for security, EcoCoach transitions sustainability from abstract data into daily actionable steps.
+**ZeroGrid** is a premium, enterprise-grade carbon tracking, analytics, and gamification platform. The application provides modular carbon calculators, high-fidelity data visualizations, personalized reduction targets, interactive eco-challenges, and a simulated carbon offset marketplace. Optimized for performance and hardened for security, ZeroGrid transitions sustainability from abstract data into daily actionable steps.
 
 ---
 
-## 🚀 Live Demo
-* **Production Deployment URL**: [https://carbonfootprintcalculator.me/](https://carbonfootprintcalculator.me/)
-* **Backend Status Health Check**: [https://carbonfootprintcalculator.me/api/health](https://carbonfootprintcalculator.me/api/health)
+## 🚀 Live Demo & Status
+* **Backend Status Health Check**: `https://zerogrid.onrender.com/api/health`
 
 ---
 
@@ -18,7 +17,7 @@ Carbon dioxide and greenhouse gas emissions are driving climate change, yet the 
 ---
 
 ## 💡 Solution
-EcoCoach solves this by offering a responsive, zero-latency dashboard that tracks, validates, and aggregates carbon emissions. By converting logged footprint entries into points, streaks, and achievements, it incentivizes green habits. Users can set custom reduction goals and immediately purchase simulated offsets with their earned points, fostering an engaging ecosystem that translates climate consciousness into behavioral action.
+ZeroGrid solves this by offering a responsive, zero-latency dashboard that tracks, validates, and aggregates carbon emissions. By converting logged footprint entries into points, streaks, and achievements, it incentivizes green habits. Users can set custom reduction goals and immediately purchase simulated offsets with their earned points, fostering an engaging ecosystem that translates climate consciousness into behavioral action.
 
 ---
 
@@ -40,12 +39,12 @@ EcoCoach solves this by offering a responsive, zero-latency dashboard that track
 * **Technical Summary**: Handled via `/api/user/goals` routes writing to the `user_goals` SQLite table.
 
 ### 🏆 Gamification & Achievement System
-* **Purpose**: Auto-allocates Eco-Points and logs daily tracking streaks.
+* **Purpose**: Auto-allocates ZeroGrid Points and logs daily tracking streaks.
 * **User Benefit**: Rewards sustainable behavior through unlocked milestones.
 * **Technical Summary**: Utilizes streak calculation algorithms updating SQLite columns on the first entry of the day.
 
 ### 🍃 Carbon Offset Marketplace
-* **Purpose**: Exchange earned Eco-Points to support simulated offset initiatives.
+* **Purpose**: Exchange earned ZeroGrid Points to support simulated offset initiatives.
 * **User Benefit**: Offset unavoidable emissions while learning about global offset types (Forestry, Renewables).
 * **Technical Summary**: Points deduction and offset purchase logs run inside database transactions to prevent double-spending.
 
@@ -55,7 +54,7 @@ EcoCoach solves this by offering a responsive, zero-latency dashboard that track
 
 ```
 +------------------+     (Post Log)     +------------------+     (Redeem Points)     +--------------------+
-| Carbon Log Form  |  ===============>  |  Eco Streak &    |  =====================>  | Carbon Offset      |
+| Carbon Log Form  |  ===============>  |  Grid Streak &   |  =====================>  | Carbon Offset      |
 | Transport/Energy |                    |  Badge Engine    |                          | Marketplace        |
 +------------------+                    +------------------+                          +--------------------+
 ```
@@ -70,7 +69,7 @@ EcoCoach solves this by offering a responsive, zero-latency dashboard that track
 
 ### 2. Gamification and Challenge Logic
 * **Streaks**: A scheduler evaluates difference between the last logged date and the current date:
-  * `Difference = 1 day`: Streak increases, awarding Eco-Points (+10 daily, +50 bonus every 7 days).
+  * `Difference = 1 day`: Streak increases, awarding ZeroGrid Points (+10 daily, +50 bonus every 7 days).
   * `Difference > 1 day`: Streak resets to 1.
 * **Challenges**: The database checks active challenges (e.g. Meatless Week, Car-Free Commute) against user entries to increment challenge progress.
 
@@ -91,12 +90,12 @@ EcoCoach solves this by offering a responsive, zero-latency dashboard that track
 * **Winston**: JSON logging utility tracking server status and failures.
 
 ### Database
-* **SQLite (Better-SQLite3)**: Zero-latency, zero-hosting-cost relational database.
+* **SQLite (Better-SQLite3)**: Relational database running locally.
 * **Drizzle ORM**: Type-safe query builder running in WAL (Write-Ahead Logging) mode.
 
 ### DevOps & Infrastructure
-* **Nginx**: Web server proxying requests to local ports and handling SSL termination.
-* **PM2**: Daemon process manager supervising application lifecycle status.
+* **Render**: Blueprint-based deployment.
+* **Nginx**: Web server proxying requests to local ports and handling SSL termination (for VPS setups).
 * **Docker / Docker Compose**: Standardizes builder and runner stages.
 
 ---
@@ -104,14 +103,12 @@ EcoCoach solves this by offering a responsive, zero-latency dashboard that track
 ## 📂 Folder Structure
 
 ```
-carbon-footprint-calculator/
+zero-grid/
 ├── package.json              # Monorepo workspaces & root execution scripts
 ├── tsconfig.json             # Root TypeScript options
 ├── Dockerfile                # Multi-stage production container build config
 ├── docker-compose.yml        # Docker compose services & persistence
-├── .github/
-│   └── workflows/
-│       └── deploy.yml        # GitHub Actions CI/CD workflow testing pipeline
+├── render.yaml               # Render Infrastructure blueprint configuration
 ├── shared/                   # Shared modules (npm workspace)
 │   ├── src/
 │   │   ├── types.ts          # Common interfaces (kpis, entries, users)
@@ -142,43 +139,74 @@ carbon-footprint-calculator/
 
 ---
 
-## 🧮 Carbon Calculation Engine
+## 🔥 Firebase Setup & Migration Guide
 
-Calculations are computed on the secure Express backend using standard **DEFRA (UK Department for Environment, Food and Rural Affairs)** and **EPA (US Environmental Protection Agency)** carbon conversion factors:
+To configure Authentication for ZeroGrid using Firebase (enabling both Email/Password and Google Sign-In):
 
-### Emission Factors Index (`kg CO2e` per unit)
+### 1. Create a Firebase Project
+1. Open the [Firebase Console](https://console.firebase.google.com/).
+2. Click **Add Project** and give it a name (e.g. `ZeroGrid-Platform`).
+3. Click **Continue** and configure Google Analytics as per your choice, then select **Create Project**.
 
-| Category | Sub-Category | Factor | Unit | Source |
-| :--- | :--- | :--- | :--- | :--- |
-| **Energy** | Electricity | `0.38` | kg CO2e / kWh | EPA Grid Average |
-| | Natural Gas | `0.18` | kg CO2e / kWh | DEFRA Carbon Factor |
-| **Transport** | Petrol Car | `0.17` | kg CO2e / km | DEFRA Medium Car |
-| | Diesel Car | `0.16` | kg CO2e / km | DEFRA Medium Car |
-| | Electric Car | `0.05` | kg CO2e / km | Grid Charged Average |
-| | Bus | `0.09` | kg CO2e / km | DEFRA Passenger Transit |
-| | Train | `0.04` | kg CO2e / km | DEFRA Rail Average |
-| | Flight Short (<3h) | `0.24` | kg CO2e / km | DEFRA Aviation |
-| | Flight Long (>=3h) | `0.15` | kg CO2e / km | DEFRA Aviation |
-| **Food** | Beef | `27.00` | kg CO2e / kg | EPA Food Lifecycle |
-| | Poultry | `6.90` | kg CO2e / kg | EPA Food Lifecycle |
-| | Vegetarian | `2.00` | kg CO2e / kg | Average Dairy/Egg meal |
-| | Vegan | `1.50` | kg CO2e / kg | Average Plant-based meal |
-| **Waste** | Landfill | `0.45` | kg CO2e / kg | EPA Waste Index |
-| | Recycled | `0.02` | kg CO2e / kg | Processing footprint |
+### 2. Register a Web App
+1. In the Project Dashboard, click the **Web icon (</>)** to register an app.
+2. Enter app nickname (`ZeroGrid Web`), then click **Register App**.
+3. Copy the configuration object keys (you will need these for your environment variables).
 
-### Calculation Flow
-$$\text{Total Emission (kg } CO_2e) = \text{Input Value} \times \text{Emission Factor}$$
-*Example: Logging a 350 km commute in a Petrol Car: $350 \times 0.17 = 59.50 \text{ kg } CO_2e$.*
+### 3. Enable Authentication Providers
+1. In the sidebar, select **Build > Authentication**, then click **Get Started**.
+2. Go to the **Sign-in method** tab.
+3. **Email/Password**: Select `Email/Password`, toggle it to **Enabled**, and save.
+4. **Google Sign-In**: Select `Google`, toggle to **Enabled**, choose a support email, and click **Save**.
+
+### 4. Create Backend Admin Credentials
+1. Click the gear icon next to **Project Overview** in the sidebar and select **Project settings**.
+2. Open the **Service accounts** tab.
+3. Click **Generate new private key** (this downloads a JSON file).
+4. Save the variables from this JSON file for your backend configuration:
+   * `project_id` -> `FIREBASE_PROJECT_ID`
+   * `client_email` -> `FIREBASE_CLIENT_EMAIL`
+   * `private_key` -> `FIREBASE_PRIVATE_KEY` (ensure you preserve the newline characters).
 
 ---
 
-## 🔒 Security Architecture
-1. **Broken Auth Prevention**: Integrates Firebase Authentication on the frontend and validates ID tokens on the backend using the Firebase Admin SDK.
-2. **CORS Hardening**: Limits Cross-Origin Resource Sharing exclusively to whitelisted client domains (e.g. `https://carbonfootprintcalculator.me`) and secure local ports.
-3. **Helmet CSP**: Active scripts, style assets, and connection origins are limited using strict headers to neutralize Cross-Site Scripting (XSS) vectors.
-4. **API Rate Limiting**: All API requests are restricted to `100 requests per 15 minutes` per IP address.
-5. **Proxy Verification**: Configured `trust proxy` setting to allow precise client IP tracking through Nginx.
-6. **Input Sanitization**: Strictly enforces datatype boundaries using Zod parsing schemes.
+## 🚀 Render Deployment Guide
+
+ZeroGrid is built as a workspace monorepo. In production, the Express backend builds and serves the frontend statically, allowing the app to run entirely within a single Render Web Service node.
+
+### 1. Blueprint Deployment (Recommended)
+1. Commit all changes to your GitHub Repository.
+2. Log into [Render](https://render.com/).
+3. In the Render Dashboard, click **New > Blueprint**.
+4. Select your GitHub repository.
+5. Render will detect the `render.yaml` file and automatically prepare the configuration.
+6. Under **Environment Variables**, provide the Sync variables:
+   * `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_APP_ID`.
+   * `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY` (copy the raw multiline key).
+7. Under **Disk**, Render will automatically attach a `1GB` volume to persist the SQLite `app.db` file at `/data`.
+8. Click **Deploy**.
+
+### 2. Manual Render Web Service Setup
+If you prefer to configure manually:
+1. Click **New > Web Service**.
+2. **Build Command**: `npm install && npm run build`
+3. **Start Command**: `npm --workspace=server start`
+4. **Environment Variables**:
+   * `NODE_ENV`: `production`
+   * `PORT`: `3000`
+   * `DATABASE_URL`: `file:/data/app.db`
+   * Add all Firebase client and admin variables shown in the blueprint.
+5. **Advanced > Add Disk**:
+   * Name: `sqlite-db-volume`
+   * Mount Path: `/data`
+   * Size: `1 GB`
+6. **Health Check Path**: `/api/health`
+
+### 3. Add Authorized Domain in Firebase Console
+Once the Render web service starts, copy your Render deployment URL (e.g. `https://zerogrid.onrender.com`).
+1. In the Firebase Console, navigate to **Authentication > Settings**.
+2. Select **Authorized domains**.
+3. Click **Add domain** and input your Render URL (excluding the `https://` prefix).
 
 ---
 
@@ -190,295 +218,13 @@ $$\text{Total Emission (kg } CO_2e) = \text{Input Value} \times \text{Emission F
 
 ---
 
-## ⚡ Performance Optimizations
-* **Route Code-Splitting**: Pages are loaded dynamically via `React.lazy()` to reduce initial JS script footprints.
-* **Gzip Compression**: Express applies compression middleware to minify asset transfer size.
-* **SQLite WAL Mode**: Writes and reads execute concurrently using SQLite Write-Ahead Logging to eliminate database file lock contention.
-* **Indexes**: SQLite tables enforce explicit indexes on primary search dimensions (`userId`, `entryDate`, `targetMonth`) to speed up database queries.
-
----
-
-## 📡 API Documentation
-
-### 💻 Public Calculations
-#### `POST /api/calculate`
-* *Description*: Performs calculation preview (requires no auth header).
-* *Request Body*:
-  ```json
-  {
-    "category": "transport",
-    "subCategory": "petrol_car",
-    "value": 150
-  }
-  ```
-* *Response*:
-  ```json
-  {
-    "carbonCo2eKg": 25.5,
-    "unit": "km"
-  }
-  ```
-
-### 👤 Profile
-#### `GET /api/user/profile`
-* *Description*: Fetches authenticated profile details.
-* *Headers*: `Authorization: Bearer <JWT_TOKEN>`
-* *Response (200 OK)*:
-  ```json
-  {
-    "id": "firebase-uid-123",
-    "email": "user@example.com",
-    "displayName": "User Name",
-    "avatarUrl": "https://example.com/avatar.jpg",
-    "points": 450,
-    "currentStreak": 3,
-    "lastActiveDate": "2026-06-08"
-  }
-  ```
-
-#### `PATCH /api/user/profile`
-* *Description*: Updates display details.
-* *Request Body*:
-  ```json
-  {
-    "displayName": "New Name",
-    "avatarUrl": "https://newavatar.jpg"
-  }
-  ```
-
-### 🧮 Footprint Log
-#### `GET /api/footprint`
-* *Description*: Retrieves user footprint logs.
-* *Response (200 OK)*:
-  ```json
-  [
-    {
-      "id": "uuid-987",
-      "userId": "firebase-uid-123",
-      "entryDate": "2026-06-08",
-      "category": "energy",
-      "inputValue": 250,
-      "inputUnit": "kWh",
-      "carbonCo2eKg": 95.0,
-      "metadata": { "subCategory": "electricity", "notes": "June reading" },
-      "createdAt": 1775829374
-    }
-  ]
-  ```
-
-#### `POST /api/footprint`
-* *Description*: Creates an emission log entry, checks badges, and updates streaks.
-* *Request Body*:
-  ```json
-  {
-    "entryDate": "2026-06-08",
-    "category": "food",
-    "inputValue": 1.5,
-    "inputUnit": "kg",
-    "subCategory": "beef",
-    "notes": "Steak night"
-  }
-  ```
-* *Response (210 Created)*:
-  ```json
-  {
-    "message": "Footprint entry logged successfully",
-    "entry": { ... },
-    "gamification": {
-      "streakUpdated": true,
-      "pointsAwarded": 10,
-      "completedChallenges": ["Meatless Week"]
-    }
-  }
-  ```
-
-#### `DELETE /api/footprint/:id`
-* *Description*: Deletes a specific log.
-
-### 🎯 Custom Goals
-#### `GET /api/user/goals`
-* *Description*: Lists user reduction targets.
-
-#### `POST /api/user/goals`
-* *Description*: Creates or updates target budgets.
-* *Request Body*:
-  ```json
-  {
-    "category": "total",
-    "targetValue": 350.0,
-    "targetMonth": "2026-06"
-  }
-  ```
-
-### 🍃 simulated Offsets
-#### `GET /api/offsets`
-* *Description*: Gets user offset transactions logs.
-
-#### `POST /api/offsets/purchase`
-* *Description*: Buys offsets using earned Eco-Points.
-* *Request Body*:
-  ```json
-  {
-    "projectId": "amazon_reforestation",
-    "offsetAmountCo2eKg": 5.0
-  }
-  ```
-* *Response (201 Created)*:
-  ```json
-  {
-    "message": "Successfully offset 5 kg of CO2e!",
-    "purchase": {
-      "id": "uuid-purchase",
-      "projectId": "amazon_reforestation",
-      "offsetAmountCo2eKg": 5.0,
-      "costSimulatedCurrency": 500,
-      "purchasedAt": 1775829390
-    },
-    "user": { "points": 450 },
-    "badgeAwarded": true
-  }
-  ```
-
----
-
-## 🗄️ Database Schema Overview
-
-```
- +------------------+           +--------------------+
- |      users       | <-------- | footprint_entries  |
- |------------------|           +--------------------+
- | id (PK)          |           +--------------------+
- | email            | <-------- |  user_challenges   |
- | points           |           +--------------------+
- | current_streak   |           +--------------------+
- | last_active_date | <-------- |  user_achievements |
- +------------------+           +--------------------+
-                                +--------------------+
-                                |  offset_purchases  |
-                                +--------------------+
-                                +--------------------+
-                                |     user_goals     |
-                                +--------------------+
-```
-
-The database utilizes one-to-many relationships matching users to footprint entries, goals, streaks, offset history, and unlocked achievements.
-
----
-
-## ⚙️ Installation Guide
-
-### Prerequisites
-* **Node.js**: Version 20.x or higher
-* **NPM**: Version 10.x or higher
-
-### Local Development Setup
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/paladuguganeshnaidu/carbon-footprint-calculator.git
-   cd carbon-footprint-calculator
-   ```
-
-2. **Install workspace dependencies**:
-   ```bash
-   npm install --legacy-peer-deps
-   ```
-
-3. **Configure environment variables**:
-   Create `.env` variables files in both `client` and `server` directories:
-   
-   **Client configuration (`client/.env`)**:
-   ```env
-   VITE_API_URL=/api
-   # Firebase keys (Leave empty to trigger dev Mock Auth Mode!)
-   VITE_FIREBASE_API_KEY=
-   VITE_FIREBASE_AUTH_DOMAIN=
-   VITE_FIREBASE_PROJECT_ID=
-   VITE_FIREBASE_APP_ID=
-   ```
-   
-   **Server configuration (`server/.env`)**:
-   ```env
-   PORT=3000
-   NODE_ENV=development
-   DATABASE_URL=file:./app.db
-   # Firebase keys (Leave empty to trigger dev Mock Auth Mode!)
-   FIREBASE_PROJECT_ID=
-   FIREBASE_CLIENT_EMAIL=
-   FIREBASE_PRIVATE_KEY=
-   ```
-
-4. **Initialize schemas**:
-   Create the SQLite database and sync schemas using Drizzle:
-   ```bash
-   npm run db:push
-   ```
-
-5. **Build and run client & server**:
-   Build the shared library dependencies and start workspace tasks:
-   ```bash
-   # Compile shared typings
-   npm run build:shared
-
-   # Run dev scripts concurrently (in separate terminal windows)
-   npm run dev:server
-   npm run dev:client
-   ```
-   The local client server will boot at `http://localhost:5173`.
-
----
-
-## 🐳 Docker Deployment
-
-To launch the system containerized using Docker Compose:
-
-1. **Configure credentials**: Make sure environment files (`server/.env`) contain your target variables.
-2. **Build and compose containers**:
-   ```bash
-   docker-compose up -d --build
-   ```
-3. **Verify container status**:
-   ```bash
-   docker ps
-   docker logs carbon-footprint-calculator
-   ```
-
----
-
-## 🌐 VPS Deployment Configuration (Nginx, PM2, SSL)
-
-Deploying onto a virtual private server running Ubuntu:
-
-### 1. Nginx Host Setup (`/etc/nginx/sites-available/default`)
-Modify host targets to proxy port `80` to port `3000`:
-```nginx
-server {
-    listen 80;
-    server_name carbonfootprintcalculator.me www.carbonfootprintcalculator.me;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-### 2. PM2 Deployment Task
-Initialize the production environment via PM2:
-```bash
-# Build the client and server assets
-npm run build
-
-# Start process daemon
-cd server
-pm2 start dist/app.js --name "carbon-footprint-calculator" --update-env --env NODE_ENV=production --env PORT=3000
-```
+## 🔒 Security Architecture
+1. **Broken Auth Prevention**: Integrates Firebase Authentication on the frontend and validates ID tokens on the backend using the Firebase Admin SDK.
+2. **CORS Hardening**: Limits Cross-Origin Resource Sharing exclusively to whitelisted client domains (e.g. `https://zerogrid.onrender.com`) and secure local ports.
+3. **Helmet CSP**: Active scripts, style assets, and connection origins are limited using strict headers to neutralize Cross-Site Scripting (XSS) vectors.
+4. **API Rate Limiting**: All API requests are restricted to `100 requests per 15 minutes` per IP address.
+5. **Proxy Verification**: Configured `trust proxy` setting to allow precise client IP tracking through Nginx.
+6. **Input Sanitization**: Strictly enforces datatype boundaries using Zod parsing schemes.
 
 ---
 
@@ -489,41 +235,6 @@ Run the complete automated test suite locally:
 npm run test
 ```
 *Note: Vitest covers calculator calculations, database schemas, API routing, and authentication fallback controls.*
-
----
-
-## 📊 Monitoring & Logging
-* **Server Logs**: Winston writes JSON logs (capped at 5MB, rotated daily) to `server/logs/combined.log` and error exceptions to `server/logs/errors.log`.
-* **Health API Check**: Query `/api/health` to confirm memory statistics, database query health, and Firebase validation layers status.
-
----
-
-## 💡 Use Cases
-* **NGOs & Climate Activists**: Educate communities on local emission factors and support reforestation.
-* **Students & Educators**: Interactive lab tracking tool showing exact carbon output changes in dietary and transit habits.
-* **Families**: Budget and reduce home heating energy bills through custom monthly reduction goals.
-
----
-
-## 🔮 Future Roadmap
-* **Utility Bill Integrations**: Import smart meter readings and monthly energy usage via OCR scans.
-* **Verified Offsets Integration**: Link Eco-Points with verified third-party API providers (like Gold Standard) to retire real carbon credits.
-* **Social Sharing**: Share badges and streaks to competitive leaderboards on social platforms.
-
----
-
-## 📸 Page Mockups & Screenshots
-* *Dashboard KPIs & Trends*: Rendering emission charts, points, and streaking states.
-* *Log Emissions UI*: Visual inputs to calculate energy, food, and transport factors.
-* *Offset Marketplace Grid*: Selection of wind, forestry, and water preservation projects.
-
----
-
-## 🏆 Production Readiness Checklist
-* [x] **0 Security Risks**: Strict Helmet headers, CORS restrictions, and API rate limiters are verified.
-* [x] **Authentication Bypass Protected**: Secure token verification layers protect user data.
-* [x] **Accessibility Certified**: Keyboard navigation loops and Recharts screen reader support table structures are complete.
-* [x] **Verified VPS deployment**: Reverse Nginx proxy and PM2 managers are live.
 
 ---
 
