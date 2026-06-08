@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { Mail, RefreshCw, LogOut, AlertCircle, CheckCircle, ExternalLink, ShieldAlert, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import { formatAuthError } from '../utils/authErrors.ts';

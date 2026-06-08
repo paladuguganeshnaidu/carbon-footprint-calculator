@@ -6,13 +6,11 @@ import { OffsetPurchase } from '@carbon/shared';
 import { 
   Trophy, 
   ShoppingBag, 
-  FileText, 
   MapPin, 
   Globe, 
   TreePine, 
   Wind, 
   Droplet,
-  CheckCircle,
   Download,
   AlertCircle
 } from 'lucide-react';

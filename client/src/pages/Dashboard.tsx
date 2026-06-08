@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.tsx';
 import { fetchDashboard, fetchFootprints, deleteFootprint } from '../services/api.ts';
@@ -11,7 +11,6 @@ import {
   Cell, 
   Tooltip, 
   Legend, 
-  BarChart, 
   Bar, 
   XAxis, 
   YAxis, 
@@ -19,7 +18,7 @@ import {
   Line, 
   ComposedChart
 } from 'recharts';
-import { Trash2, TrendingDown, Leaf, Info, Zap, Car, Utensils, Trash } from 'lucide-react';
+import { Trash2, Leaf, Info, Zap, Car, Utensils, Trash } from 'lucide-react';
 
 interface DashboardProps {
   onStatsUpdate: (points: number, streak: number) => void;

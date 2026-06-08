@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.tsx';
-import { createFootprint, calculatePreview } from '../services/api.ts';
+import { createFootprint, fetchDashboard } from '../services/api.ts';
 import { EMISSION_FACTORS } from '@carbon/shared';
 import { 
   Zap, 
@@ -126,9 +126,12 @@ export default function Calculator({ onStatsUpdate }: CalculatorProps) {
 
       // Refresh layout points and streak widget
       if (result.gamification) {
-        // Since getOrCreateUser updates user details, fetchDashboard updates stats. 
-        // We'll calculate local points update or trust user dashboard to load them.
-        // We trigger callback to parent to adjust top bar statistics.
+        try {
+          const dashData = await fetchDashboard(getIdToken, user);
+          onStatsUpdate(dashData.kpis.pointsEarned, dashData.kpis.activeStreak);
+        } catch (dashboardErr) {
+          console.error('Failed to update stats after footprint entry:', dashboardErr);
+        }
       }
     } catch (err: any) {
       console.error(err);

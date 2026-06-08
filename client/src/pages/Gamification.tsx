@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { fetchChallenges, fetchAchievements, fetchDashboard } from '../services/api.ts';
 import { ECO_CHALLENGES } from '@carbon/shared';
@@ -6,7 +6,6 @@ import { UserChallenge, UserAchievement } from '@carbon/shared';
 import { 
   Trophy, 
   Flame, 
-  CheckCircle2, 
   Lock, 
   Star, 
   Calendar,
@@ -68,7 +67,6 @@ export default function Gamification({ onStatsUpdate }: GamificationProps) {
   const [points, setPoints] = useState(0);
   const [streak, setStreak] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   const loadData = async () => {
     try {
@@ -84,8 +82,7 @@ export default function Gamification({ onStatsUpdate }: GamificationProps) {
 
       onStatsUpdate(dashData.user.points, dashData.user.currentStreak);
     } catch (err: any) {
-      console.error(err);
-      setError('Failed to fetch gamification profile details.');
+      console.error('Failed to fetch gamification profile details:', err);
     } finally {
       setLoading(false);
     }
