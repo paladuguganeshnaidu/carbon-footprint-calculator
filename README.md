@@ -1,4 +1,4 @@
-# ZeroGrid - Carbon Intelligence Engine
+# carbon-footprint-calculator
 
 ### Empowering individuals to calculate, reduce, and offset emissions with precision.
 
