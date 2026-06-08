@@ -40,7 +40,7 @@ const CATEGORY_ICONS: Record<string, any> = {
 };
 
 export default function Dashboard({ onStatsUpdate }: DashboardProps) {
-  const { user, getIdToken } = useAuth();
+  const { user, getIdToken, reloadUser } = useAuth();
   const [data, setData] = useState<DashboardSummaryResponse | null>(null);
   const [recentEntries, setRecentEntries] = useState<FootprintEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,6 +49,7 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError('');
       const dashData = await fetchDashboard(getIdToken, user);
       const logs = await fetchFootprints(getIdToken, user);
       
@@ -60,8 +61,22 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
       setError('');
     } catch (err: any) {
       console.error(err);
-      setError('Failed to fetch dashboard metrics.');
+      setError(err.message || 'Failed to fetch dashboard metrics.');
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRetry = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      if (reloadUser) {
+        await reloadUser();
+      }
+      await loadData();
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch dashboard metrics.');
       setLoading(false);
     }
   };
@@ -93,7 +108,7 @@ export default function Dashboard({ onStatsUpdate }: DashboardProps) {
       <div style={{ padding: '24px', color: 'var(--danger)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <h2>Something went wrong</h2>
         <p>{error}</p>
-        <button onClick={loadData} className="btn btn-primary" style={{ alignSelf: 'flex-start' }}>Retry</button>
+        <button onClick={handleRetry} className="btn btn-primary" style={{ alignSelf: 'flex-start' }}>Retry</button>
       </div>
     );
   }

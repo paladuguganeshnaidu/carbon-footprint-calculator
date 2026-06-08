@@ -19,17 +19,31 @@ async function getHeaders(getIdToken: () => Promise<string | null>, user: any) {
   return headers;
 }
 
-export async function fetchDashboard(getIdToken: () => Promise<string | null>, user: any) {
+export async function fetchDashboard(getIdToken: (forceRefresh?: boolean) => Promise<string | null>, user: any) {
   const headers = await getHeaders(getIdToken, user);
   const res = await fetch(`${API_BASE}/user/dashboard`, { headers });
-  if (!res.ok) throw new Error('Failed to fetch dashboard data');
+  if (!res.ok) {
+    let errMsg = 'Failed to fetch dashboard data';
+    try {
+      const errBody = await res.json();
+      if (errBody && errBody.error) errMsg = errBody.error;
+    } catch (_) {}
+    throw new Error(errMsg);
+  }
   return res.json();
 }
 
-export async function fetchFootprints(getIdToken: () => Promise<string | null>, user: any) {
+export async function fetchFootprints(getIdToken: (forceRefresh?: boolean) => Promise<string | null>, user: any) {
   const headers = await getHeaders(getIdToken, user);
   const res = await fetch(`${API_BASE}/footprint`, { headers });
-  if (!res.ok) throw new Error('Failed to fetch footprint logs');
+  if (!res.ok) {
+    let errMsg = 'Failed to fetch footprint logs';
+    try {
+      const errBody = await res.json();
+      if (errBody && errBody.error) errMsg = errBody.error;
+    } catch (_) {}
+    throw new Error(errMsg);
+  }
   return res.json();
 }
 

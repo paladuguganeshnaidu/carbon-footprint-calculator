@@ -6,7 +6,7 @@ interface AuthContextType {
   user: { uid: string; email: string; displayName: string | null; avatarUrl?: string | null; emailVerified: boolean } | null;
   loading: boolean;
   isDevMode: boolean;
-  getIdToken: () => Promise<string | null>;
+  getIdToken: (forceRefresh?: boolean) => Promise<string | null>;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -123,9 +123,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getIdToken = async (): Promise<string | null> => {
+  const getIdToken = async (forceRefresh = false): Promise<string | null> => {
     if (isFirebaseConfigured && auth && auth.currentUser) {
-      return auth.currentUser.getIdToken();
+      return auth.currentUser.getIdToken(forceRefresh);
     }
     return 'mock-developer-jwt-token';
   };
@@ -140,6 +140,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseConfigured && auth && auth.currentUser) {
       await auth.currentUser.reload();
       const fbUser = auth.currentUser;
+      
+      // Force token refresh if verified to update claims
+      if (fbUser.emailVerified) {
+        await fbUser.getIdToken(true);
+      }
+
       setUser({
         uid: fbUser.uid,
         email: fbUser.email,
